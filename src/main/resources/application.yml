@@ -1,0 +1,30 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: auth
+  main:
+    log-startup-info: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/otus-patterns?currentSchema=auth
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/changelog/changelog-master.xml
+    enabled: true
+
+management:
+  info:
+    git:
+      mode: "FULL"
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+
+logging:
+  level:
+    root: INFO
+    ru.otus.auth: INFO
