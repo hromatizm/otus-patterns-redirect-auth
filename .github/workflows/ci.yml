@@ -24,3 +24,6 @@ jobs:
 
       - name: Build and test
         run: gradle build
+
+      - name: Check Kover coverage
+        run: ./gradlew koverVerify
