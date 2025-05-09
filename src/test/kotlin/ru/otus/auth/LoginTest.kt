@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Nested
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
@@ -33,7 +36,7 @@ private const val BAD_CREDENTIALS_ERROR = "Incorrect login or password"
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(properties = ["spring.liquibase.enabled=false"])
+@ActiveProfiles("test")
 class LoginTest {
 
     @Autowired
