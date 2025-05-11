@@ -5,8 +5,8 @@ import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.otus.auth.exception.BadCredentialsException
-import ru.otus.auth.user.UserEntity
 import ru.otus.auth.user.IUserRepository
+import ru.otus.auth.user.UserModel
 import ru.otus.auth.util.lazyLogger
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -16,7 +16,7 @@ import java.util.*
 class LoginService(
     private val encoder: PasswordEncoder,
     private val keyProvider: KeyProvider,
-    private val IUserRepository: IUserRepository,
+    private val userRepository: IUserRepository,
 ) {
 
     private val logger by lazyLogger()
@@ -36,12 +36,12 @@ class LoginService(
         if (!passwordIsCorrect) throw BadCredentialsException()
     }
 
-    private fun findUserOrElseThrow(login: String): UserEntity {
-        return IUserRepository.findByLogin(login)
+    private fun findUserOrElseThrow(login: String): UserModel {
+        return userRepository.findByLogin(login)
             ?: throw BadCredentialsException()
     }
 
-    private fun buildJwt(user: UserEntity): String {
+    private fun buildJwt(user: UserModel): String {
         val now = Instant.now()
         val expiry = now.plus(30, ChronoUnit.DAYS)
         return Jwts.builder()

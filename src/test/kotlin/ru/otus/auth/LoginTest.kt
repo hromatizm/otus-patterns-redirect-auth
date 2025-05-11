@@ -8,13 +8,10 @@ import org.junit.jupiter.api.Nested
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -23,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import ru.otus.auth.login.KeyProvider
 import ru.otus.auth.login.LoginDto
-import ru.otus.auth.user.IUserRepository
+import ru.otus.auth.user.IUserJpaRepository
 import ru.otus.auth.user.UserEntity
 import kotlin.test.Test
 
@@ -31,7 +28,8 @@ private const val USER_ID = 1234567890L
 private const val USER_FULL_NAME = "user_full_name"
 private const val USER_LOGIN = "user_login"
 private const val USER_PASSWORD = "user_password"
-private const val USER_PASSWORD_ENCODED = """${'$'}2a${'$'}10${'$'}SoQL/B6LYVBfkT.Yq..n8eFiqfvuGz4CjBVc3FkKPqVLRXcrhbHLK"""
+private const val USER_PASSWORD_ENCODED =
+    """${'$'}2a${'$'}10${'$'}SoQL/B6LYVBfkT.Yq..n8eFiqfvuGz4CjBVc3FkKPqVLRXcrhbHLK"""
 private const val BAD_CREDENTIALS_ERROR = "Incorrect login or password"
 
 @SpringBootTest
@@ -49,7 +47,7 @@ class LoginTest {
     lateinit var keyProvider: KeyProvider
 
     @MockitoBean
-    lateinit var userRepository: IUserRepository
+    lateinit var userJpaRepository: IUserJpaRepository
 
     private val uri = "/api/v1/login"
 
@@ -63,7 +61,7 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userRepository.findByLogin(any())).thenReturn(
+            whenever(userJpaRepository.selectByLogin(any())).thenReturn(
                 UserEntity(
                     id = USER_ID,
                     fullName = USER_FULL_NAME,
@@ -116,7 +114,7 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userRepository.findByLogin(any())).thenReturn(null)
+            whenever(userJpaRepository.selectByLogin(any())).thenReturn(null)
         }
 
         val loginDto = LoginDto(
@@ -156,14 +154,15 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userRepository.findByLogin(any())).thenReturn(
+            whenever(userJpaRepository.selectByLogin(any())).thenReturn(
                 UserEntity(
                     id = USER_ID,
                     fullName = USER_FULL_NAME,
                     login = USER_LOGIN,
                     encodedPassword = USER_PASSWORD_ENCODED
                 )
-            )        }
+            )
+        }
 
         val loginDto = LoginDto(
             login = USER_LOGIN,

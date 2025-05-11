@@ -9,10 +9,26 @@ class UserMapper(
     private val encoder: PasswordEncoder
 ) {
 
-    fun toEntity(dto: RegistrationDto) =
-        UserEntity(
+    fun toModel(dto: RegistrationDto) =
+        UserModel(
             fullName = dto.fullName,
             login = dto.login,
             encodedPassword = encoder.encode(dto.password),
+        )
+
+    fun toEntity(model: UserModel) =
+        UserEntity(
+            id = model.id,
+            fullName = model.fullName,
+            login = model.login,
+            encodedPassword = model.encodedPassword,
+        )
+
+    fun toModel(entity: UserEntity) =
+        UserModel(
+            id = entity.id,
+            fullName = entity.fullName,
+            login = entity.login,
+            encodedPassword = entity.encodedPassword,
         )
 }

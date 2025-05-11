@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -18,7 +17,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import ru.otus.auth.registration.RegistrationDto
-import ru.otus.auth.user.IUserRepository
+import ru.otus.auth.user.IUserJpaRepository
 import ru.otus.auth.user.UserEntity
 import kotlin.test.Test
 
@@ -26,7 +25,8 @@ private const val USER_ID = 1234567890L
 private const val USER_FULL_NAME = "user_full_name"
 private const val USER_LOGIN = "user_login"
 private const val USER_PASSWORD = "user_password"
-private const val USER_PASSWORD_ENCODED = """${'$'}2a${'$'}10${'$'}SoQL/B6LYVBfkT.Yq..n8eFiqfvuGz4CjBVc3FkKPqVLRXcrhbHLK"""
+private const val USER_PASSWORD_ENCODED =
+    """${'$'}2a${'$'}10${'$'}SoQL/B6LYVBfkT.Yq..n8eFiqfvuGz4CjBVc3FkKPqVLRXcrhbHLK"""
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,7 +40,7 @@ class RegistrationTest {
     lateinit var objectMapper: ObjectMapper
 
     @MockitoBean
-    lateinit var userRepository: IUserRepository
+    lateinit var userJpaRepository: IUserJpaRepository
 
     private val uri = "/api/v1/registration"
     private val registrationDto = RegistrationDto(
@@ -51,7 +51,7 @@ class RegistrationTest {
 
     @BeforeEach
     fun setupMocks() {
-        whenever(userRepository.save(any())).thenReturn(
+        whenever(userJpaRepository.save(any())).thenReturn(
             UserEntity(
                 id = USER_ID,
                 fullName = USER_FULL_NAME,
