@@ -11,17 +11,16 @@ interface IUserJpaRepository : JpaRepository<UserEntity, Long> {
 @Repository
 class UserRepository(
     private val jpaDelegate: IUserJpaRepository,
-    private val mapper: UserMapper,
 ) : IUserRepository {
 
     override fun findByLogin(login: String): UserModel? {
         val entity = jpaDelegate.selectByLogin(login)
-        return entity?.let { mapper.toModel(it) }
+        return entity?.toModel()
     }
 
     override fun save(model: UserModel): UserModel {
-        val entity = mapper.toEntity(model)
-        val savedEntity = jpaDelegate.save(entity)
-        return mapper.toModel(savedEntity)
+        val savedEntity = jpaDelegate.save(model.toEntity())
+        return savedEntity.toModel()
     }
+
 }

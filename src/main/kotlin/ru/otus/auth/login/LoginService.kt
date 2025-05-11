@@ -21,10 +21,10 @@ class LoginService(
 
     private val logger by lazyLogger()
 
-    fun login(dto: LoginDto): String {
-        logger.info("User login started $dto")
-        val user = findUserOrElseThrow(dto.login)
-        checkPassword(rawPass = dto.password, encodedPass = user.encodedPassword)
+    fun login(model: LoginModel): String {
+        logger.info("User login started $model")
+        val user = findUserOrElseThrow(model.login)
+        checkPassword(rawPass = model.password, encodedPass = user.encodedPassword)
         return buildJwt(user).also {
             logger.info("User login finished. User id: ${user.id}")
         }

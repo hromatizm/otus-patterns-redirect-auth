@@ -10,7 +10,8 @@ import ru.otus.auth.util.lazyLogger
 @RestController
 @RequestMapping("/api/v1")
 class RegistrationController(
-    private val registrationService: RegistrationService
+    private val mapper: RegistrationMapper,
+    private val registrationService: RegistrationService,
 ) {
 
     private val logger by lazyLogger()
@@ -18,7 +19,8 @@ class RegistrationController(
     @PostMapping("/registration")
     fun register(@RequestBody dto: RegistrationDto): ResponseEntity<Long> {
         logger.info("Registration request received: $dto")
-        val userId = registrationService.register(dto)
+        val model = mapper.toModel(dto)
+        val userId = registrationService.register(model)
         return ResponseEntity.ok().body(userId)
     }
 }
