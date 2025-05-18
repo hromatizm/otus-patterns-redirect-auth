@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 
 interface IUserJpaRepository : JpaRepository<UserEntity, Long> {
 
-    fun selectByLogin(login: String): UserEntity?
+    fun findByLogin(login: String): UserEntity?
 }
 
 @Repository
@@ -14,7 +14,7 @@ class UserRepository(
 ) : IUserRepository {
 
     override fun findByLogin(login: String): UserModel? {
-        val entity = jpaDelegate.selectByLogin(login)
+        val entity = jpaDelegate.findByLogin(login)
         return entity?.toModel()
     }
 

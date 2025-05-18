@@ -61,7 +61,7 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userJpaRepository.selectByLogin(any())).thenReturn(
+            whenever(userJpaRepository.findByLogin(any())).thenReturn(
                 UserEntity(
                     id = USER_ID,
                     fullName = USER_FULL_NAME,
@@ -114,7 +114,7 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userJpaRepository.selectByLogin(any())).thenReturn(null)
+            whenever(userJpaRepository.findByLogin(any())).thenReturn(null)
         }
 
         val loginDto = LoginDto(
@@ -154,7 +154,7 @@ class LoginTest {
 
         @BeforeEach
         fun setupMocks() {
-            whenever(userJpaRepository.selectByLogin(any())).thenReturn(
+            whenever(userJpaRepository.findByLogin(any())).thenReturn(
                 UserEntity(
                     id = USER_ID,
                     fullName = USER_FULL_NAME,
