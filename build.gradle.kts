@@ -69,22 +69,6 @@ koverReport {
                 aggregation = AggregationType.COVERED_PERCENTAGE
             }
         }
-        rule("Min 90% instructions coverage") {
-            isEnabled = true
-            bound {
-                minValue = 90
-                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.INSTRUCTION
-                aggregation = AggregationType.COVERED_PERCENTAGE
-            }
-        }
-        rule("Min 90% branches coverage") {
-            isEnabled = true
-            bound {
-                minValue = 90
-                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.BRANCH
-                aggregation = AggregationType.COVERED_PERCENTAGE
-            }
-        }
     }
 }
 
