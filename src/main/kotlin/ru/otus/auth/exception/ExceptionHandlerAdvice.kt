@@ -14,4 +14,11 @@ class ExceptionHandlerAdvice {
             .status(HttpStatus.UNAUTHORIZED)
             .body(exc.message)
     }
+
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    fun handle(exc: UserAlreadyExistsException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(exc.message)
+    }
 }

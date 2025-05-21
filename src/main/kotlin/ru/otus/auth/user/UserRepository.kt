@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository
 interface IUserJpaRepository : JpaRepository<UserEntity, Long> {
 
     fun findByLogin(login: String): UserEntity?
+
+    fun existsByLogin(login: String?): Boolean
 }
 
 @Repository
@@ -16,6 +18,10 @@ class UserRepository(
     override fun findByLogin(login: String): UserModel? {
         val entity = jpaDelegate.findByLogin(login)
         return entity?.toModel()
+    }
+
+    override fun existsByLogin(login: String?): Boolean {
+        return jpaDelegate.existsByLogin(login)
     }
 
     override fun save(model: UserModel): UserModel {

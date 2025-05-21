@@ -3,6 +3,7 @@ package ru.otus.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,42 +50,82 @@ class RegistrationTest {
         password = USER_PASSWORD
     )
 
-    @BeforeEach
-    fun setupMocks() {
-        whenever(userJpaRepository.save(any())).thenReturn(
-            UserEntity(
-                id = USER_ID,
-                fullName = USER_FULL_NAME,
-                login = USER_LOGIN,
-                encodedPassword = USER_PASSWORD_ENCODED
+    @Nested
+    inner class SuccessRegistrationTest {
+
+        @BeforeEach
+        fun setupMocks() {
+            whenever(userJpaRepository.existsByLogin(USER_LOGIN)).thenReturn(false)
+            whenever(userJpaRepository.save(any())).thenReturn(
+                UserEntity(
+                    id = USER_ID,
+                    fullName = USER_FULL_NAME,
+                    login = USER_LOGIN,
+                    encodedPassword = USER_PASSWORD_ENCODED
+                )
             )
-        )
+        }
+
+        @Test
+        fun `the answer is OK`() {
+            // Arrange
+            val request = createRegistrationRequest(registrationDto)
+
+            // Act
+            val resultActions: ResultActions = mockMvc.perform(request)
+
+            // Assert
+            resultActions.andExpect(status().isOk)
+        }
+
+        @Test
+        fun `body with user id`() {
+            // Arrange
+            val request = createRegistrationRequest(registrationDto)
+
+            // Act
+            val responseContent = mockMvc
+                .perform(request)
+                .andReturn().response.contentAsString
+
+            // Assert
+            assertThat(responseContent).isEqualTo(USER_ID.toString())
+        }
     }
 
-    @Test
-    fun `the answer is OK`() {
-        // Arrange
-        val request = createRegistrationRequest(registrationDto)
+    @Nested
+    inner class FailRegistrationTest {
 
-        // Act
-        val resultActions: ResultActions = mockMvc.perform(request)
+        @BeforeEach
+        fun setupMocks() {
+            whenever(userJpaRepository.existsByLogin(USER_LOGIN)).thenReturn(true)
+        }
 
-        // Assert
-        resultActions.andExpect(status().isOk)
-    }
+        @Test
+        fun `the answer is 409`() {
+            // Arrange
+            val request = createRegistrationRequest(registrationDto)
 
-    @Test
-    fun `body with user id`() {
-        // Arrange
-        val request = createRegistrationRequest(registrationDto)
+            // Act
+            val resultActions: ResultActions = mockMvc.perform(request)
 
-        // Act
-        val responseContent = mockMvc
-            .perform(request)
-            .andReturn().response.contentAsString
+            // Assert
+            resultActions.andExpect(status().isConflict)
+        }
 
-        // Assert
-        assertThat(responseContent).isEqualTo(USER_ID.toString())
+        @Test
+        fun `body with error message`() {
+            // Arrange
+            val request = createRegistrationRequest(registrationDto)
+
+            // Act
+            val responseContent = mockMvc
+                .perform(request)
+                .andReturn().response.contentAsString
+
+            // Assert
+            assertThat(responseContent).isEqualTo("User already exists")
+        }
     }
 
     private fun createRegistrationRequest(dto: RegistrationDto): MockHttpServletRequestBuilder {
