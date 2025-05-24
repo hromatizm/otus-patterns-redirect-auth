@@ -29,4 +29,19 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="users-login-index" author="Dmitry Mikhalishchin" context="all">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="users" columnName="login"/>
+            <not>
+                <indexExists indexName="ix_users_login"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="users" indexName="ix_users_login">
+            <column name="login"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="users" indexName="ix_users_login"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
